@@ -9,4 +9,5 @@ repositories {
 
 dependencies {
     compile 'com.sparkjava:spark-core:2.2'
+    testCompile 'junit:junit:4.12'
 }
