@@ -7,6 +7,7 @@ import ru.kalcho.datebook.model.Task;
 import ru.kalcho.datebook.model.TaskStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -40,5 +41,15 @@ public class TaskServiceTest {
 
         taskService.addTask("Test task 2", LocalDateTime.parse("2015-10-12T10:00"));
         assertEquals(2, taskService.findAll().size());
+    }
+
+    @Test
+    public void testFindByDay() throws Exception {
+        taskService.addTask("Test task 1", LocalDateTime.parse("2015-10-12T09:00"));
+        taskService.addTask("Test task 2", LocalDateTime.parse("2015-10-13T10:00"));
+        taskService.addTask("Test task 3", LocalDateTime.parse("2015-10-12T12:00"));
+
+        List<Task> byDay = taskService.findByDay(LocalDateTime.parse("2015-10-12T00:00"));
+        assertEquals(2, byDay.size());
     }
 }

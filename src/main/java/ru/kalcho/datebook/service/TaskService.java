@@ -7,6 +7,7 @@ import ru.kalcho.datebook.model.TaskStatus;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -31,6 +32,13 @@ public class TaskService {
 
     public List<Task> findAll() {
         return new ArrayList<>(taskDAO.findAll());
+    }
+
+    public List<Task> findByDay(LocalDateTime day) {
+        return taskDAO.findAll().stream()
+                .filter(task -> task.getScheduledTime().getDayOfYear() == day.getDayOfYear()
+                        && task.getScheduledTime().getYear() == day.getYear())
+                .collect(Collectors.toList());
     }
 
 }

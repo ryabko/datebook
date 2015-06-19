@@ -3,6 +3,7 @@ package ru.kalcho.datebook;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
 import ru.kalcho.datebook.dao.TaskDAO;
+import ru.kalcho.datebook.helper.DatebookCalendar;
 import ru.kalcho.datebook.service.TaskService;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -28,13 +29,22 @@ public class Main {
 
         get("/", (request, response) -> {
             Map<String, Object> attributes = new HashMap<>();
-            attributes.put("tasks", taskService.findAll());
+
+            LocalDateTime currentDate = request.queryParams("day") != null ?
+                    LocalDateTime.parse(request.queryParams("day")) : LocalDateTime.now();
+            attributes.put("calendar", new DatebookCalendar(currentDate));
+
+            attributes.put("tasks", taskService.findByDay(currentDate));
+
             return new ModelAndView(attributes, "index.ftl");
         }, htmlEngine);
 
         post("/task", (request, response) -> {
-            taskService.addTask(request.queryParams("title"), LocalDateTime.now());
-            response.redirect("/");
+            LocalDateTime scheduledDate = request.queryParams("day") != null ?
+                    LocalDateTime.parse(request.queryParams("day")) : LocalDateTime.now();
+            taskService.addTask(request.queryParams("title"), scheduledDate);
+
+            response.redirect("/?day=" + request.queryParams("day"));
             return null;
         });
     }
