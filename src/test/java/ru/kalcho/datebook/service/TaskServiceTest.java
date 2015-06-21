@@ -52,4 +52,31 @@ public class TaskServiceTest {
         List<Task> byDay = taskService.findByDay(LocalDateTime.parse("2015-10-12T00:00"));
         assertEquals(2, byDay.size());
     }
+
+    @Test
+    public void testFindById() throws Exception {
+        Task task = taskService.addTask("Test task 1", LocalDateTime.parse("2015-10-12T09:00"));
+        Task foundById = taskService.findById(task.getId());
+
+        assertEquals(task.getTitle(), foundById.getTitle());
+    }
+
+    @Test
+    public void testChangeStatus() throws Exception {
+        Task task = taskService.addTask("Test task 1", LocalDateTime.parse("2015-10-12T09:00"));
+        taskService.changeStatus(task, TaskStatus.DONE);
+
+        assertEquals(TaskStatus.DONE, taskService.findById(task.getId()).getStatus());
+    }
+
+    @Test
+    public void testUpdate() throws Exception {
+        Task task = taskService.addTask("Test task 1", LocalDateTime.parse("2015-10-12T09:00"));
+
+        Task updatedTask = taskService.findById(task.getId());
+        updatedTask.setStatus(TaskStatus.DONE);
+        taskService.update(updatedTask);
+
+        assertEquals(TaskStatus.DONE, taskService.findById(task.getId()).getStatus());
+    }
 }

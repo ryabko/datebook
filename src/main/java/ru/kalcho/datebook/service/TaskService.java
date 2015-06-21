@@ -41,4 +41,18 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
+    // TODO: update by individual fields, not whole object ?
+    public Task update(Task task) {
+        return taskDAO.update(task);
+    }
+
+    public Task findById(Long id) {
+        return taskDAO.find(id);
+    }
+
+    public Task changeStatus(Task task, TaskStatus newStatus) {
+        task.setStatus(newStatus);
+        return taskDAO.update(task);
+    }
+
 }

@@ -4,6 +4,8 @@ import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
 import ru.kalcho.datebook.dao.TaskDAO;
 import ru.kalcho.datebook.helper.DatebookCalendar;
+import ru.kalcho.datebook.model.Task;
+import ru.kalcho.datebook.model.TaskStatus;
 import ru.kalcho.datebook.service.TaskService;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -45,6 +47,18 @@ public class Main {
             taskService.addTask(request.queryParams("title"), scheduledDate);
 
             response.redirect("/?day=" + request.queryParams("day"));
+            return null;
+        });
+
+        post("/task-update", (request, response) -> {
+            Long taskId = Long.valueOf(request.queryParams("id"));
+            TaskStatus status = TaskStatus.valueOf(request.queryParams("status"));
+
+            Task task = taskService.findById(taskId);
+            task.setStatus(status);
+            taskService.update(task);
+
+            response.redirect("/?day=" + request.queryParams("returnDay"));
             return null;
         });
     }
