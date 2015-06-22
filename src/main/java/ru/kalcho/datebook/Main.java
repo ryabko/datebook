@@ -10,9 +10,13 @@ import ru.kalcho.datebook.service.TaskService;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 
+import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -26,6 +30,10 @@ public class Main {
         Configuration freeMarkerConfiguration = new Configuration();
         freeMarkerConfiguration.setTemplateLoader(new ClassTemplateLoader(Main.class, "/web"));
         FreeMarkerEngine htmlEngine = new FreeMarkerEngine(freeMarkerConfiguration);
+
+        System.out.println("args: " + Arrays.toString(args));
+
+        testDatabase(args);
 
         TaskService taskService = new TaskService(new TaskDAO());
 
@@ -61,6 +69,30 @@ public class Main {
             response.redirect("/?day=" + request.queryParams("returnDay"));
             return null;
         });
+    }
+
+    private static void testDatabase(String[] args) {
+        Map<String, String> argsMap = Stream.of(args).collect(
+                Collectors.toMap(arg -> arg.split("=")[0], arg -> arg.split("=")[1])
+        );
+        String dbHost = argsMap.get("dbHost");
+        String dbName = argsMap.get("dbName");
+        String dbUsername = argsMap.get("dbUsername");
+        String dbPassword = argsMap.get("dbPassword");
+        try {
+            Connection connection = DriverManager.getConnection(
+                    "jdbc:mysql://" + dbHost + "/" + dbName, dbUsername, dbPassword);
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery("select * from tasks");
+            while (result.next()) {
+                System.out.println("next row");
+            }
+            result.close();
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

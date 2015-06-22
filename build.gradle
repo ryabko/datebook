@@ -3,6 +3,12 @@ apply plugin: 'application'
 
 mainClassName = "ru.kalcho.datebook.Main"
 
+run {
+    if (project.hasProperty('args')) {
+        args project.args.split(' ')
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -10,5 +16,7 @@ repositories {
 dependencies {
     compile 'com.sparkjava:spark-core:2.2'
     compile 'com.sparkjava:spark-template-freemarker:2.0.0'
+//    compile 'org.sql2o:sql2o:1.5.4'
+    compile 'mysql:mysql-connector-java:5.1.18'
     testCompile 'junit:junit:4.12'
 }
