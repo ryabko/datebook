@@ -2,17 +2,18 @@ package ru.kalcho.datebook;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
-import ru.kalcho.datebook.dao.TaskDAO;
+import org.sql2o.Sql2o;
+import org.sql2o.quirks.NoQuirks;
+import ru.kalcho.datebook.dao.TaskDAOSql2o;
 import ru.kalcho.datebook.helper.DatebookCalendar;
 import ru.kalcho.datebook.model.Task;
 import ru.kalcho.datebook.model.TaskStatus;
 import ru.kalcho.datebook.service.TaskService;
+import ru.kalcho.sql2o.LocalDateTimeConverter;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 
-import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,11 +32,13 @@ public class Main {
         freeMarkerConfiguration.setTemplateLoader(new ClassTemplateLoader(Main.class, "/web"));
         FreeMarkerEngine htmlEngine = new FreeMarkerEngine(freeMarkerConfiguration);
 
-        System.out.println("args: " + Arrays.toString(args));
+        Map<String, String> opts = parseOptions(args);
+        Sql2o sql2o = new Sql2o("jdbc:mysql://" + opts.get("dbHost") + "/" + opts.get("dbName"),
+                opts.get("dbUsername"), opts.get("dbPassword"), new NoQuirks() {{
+            converters.put(LocalDateTime.class, new LocalDateTimeConverter());
+        }});
 
-        testDatabase(args);
-
-        TaskService taskService = new TaskService(new TaskDAO());
+        TaskService taskService = new TaskService(new TaskDAOSql2o(sql2o));
 
         get("/", (request, response) -> {
             Map<String, Object> attributes = new HashMap<>();
@@ -71,28 +74,10 @@ public class Main {
         });
     }
 
-    private static void testDatabase(String[] args) {
-        Map<String, String> argsMap = Stream.of(args).collect(
+    private static Map<String, String> parseOptions(String[] args) {
+        return Stream.of(args).collect(
                 Collectors.toMap(arg -> arg.split("=")[0], arg -> arg.split("=")[1])
         );
-        String dbHost = argsMap.get("dbHost");
-        String dbName = argsMap.get("dbName");
-        String dbUsername = argsMap.get("dbUsername");
-        String dbPassword = argsMap.get("dbPassword");
-        try {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://" + dbHost + "/" + dbName, dbUsername, dbPassword);
-            Statement statement = connection.createStatement();
-            ResultSet result = statement.executeQuery("select * from tasks");
-            while (result.next()) {
-                System.out.println("next row");
-            }
-            result.close();
-            statement.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
 }

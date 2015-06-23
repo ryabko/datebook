@@ -53,4 +53,14 @@ public class Task {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", creationTime=" + creationTime +
+                ", scheduledTime=" + scheduledTime +
+                ", status=" + status +
+                '}';
+    }
 }

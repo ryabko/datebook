@@ -2,7 +2,7 @@ package ru.kalcho.datebook.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import ru.kalcho.datebook.dao.TaskDAO;
+import ru.kalcho.datebook.dao.TaskDAOInMemory;
 import ru.kalcho.datebook.model.Task;
 import ru.kalcho.datebook.model.TaskStatus;
 
@@ -20,7 +20,7 @@ public class TaskServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        taskService = new TaskService(new TaskDAO());
+        taskService = new TaskService(new TaskDAOInMemory());
     }
 
     @Test

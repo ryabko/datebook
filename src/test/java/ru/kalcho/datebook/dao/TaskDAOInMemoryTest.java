@@ -12,13 +12,13 @@ import static org.junit.Assert.*;
 /**
  *
  */
-public class TaskDAOTest {
+public class TaskDAOInMemoryTest {
 
     private TaskDAO taskDAO;
 
     @Before
     public void setUp() throws Exception {
-        this.taskDAO = new TaskDAO();
+        this.taskDAO = new TaskDAOInMemory();
     }
 
     private Task createTask() {

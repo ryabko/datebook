@@ -3,45 +3,19 @@ package ru.kalcho.datebook.dao;
 import ru.kalcho.datebook.model.Task;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
  */
-public class TaskDAO {
+public interface TaskDAO {
 
-    private Long lastId = 0L;
-    private Map<Long, Task> tasks = new HashMap<>();
+    Task save(Task task);
 
-    private Long nextId() {
-        return ++lastId;
-    }
+    Task update(Task task);
 
-    public Task save(Task task) {
-        task.setId(nextId());
-        tasks.put(task.getId(), task);
-        return task;
-    }
+    Task find(Long id);
 
-    public Task update(Task task) {
-        if (!tasks.containsKey(task.getId())) {
-            throw new IllegalStateException();
-        }
-        tasks.put(task.getId(), task);
-        return task;
-    }
+    Collection<Task> findAll();
 
-    public Task find(Long id) {
-        return tasks.get(id);
-    }
-
-    public Collection<Task> findAll() {
-        return tasks.values();
-    }
-
-    public void clearAll() {
-        tasks.clear();
-    }
-
+    void clearAll();
 }

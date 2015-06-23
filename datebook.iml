@@ -31,5 +31,6 @@
     <orderEntry type="library" exported="" name="Gradle: com.sparkjava:spark-template-freemarker:2.0.0" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.freemarker:freemarker:2.3.19" level="project" />
     <orderEntry type="library" exported="" name="Gradle: mysql:mysql-connector-java:5.1.18" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: org.sql2o:sql2o:1.5.4" level="project" />
   </component>
 </module>
