@@ -9,18 +9,19 @@ import ru.kalcho.datebook.helper.DatebookCalendar;
 import ru.kalcho.datebook.model.Task;
 import ru.kalcho.datebook.model.TaskStatus;
 import ru.kalcho.datebook.service.TaskService;
+import ru.kalcho.datebook.util.JsonUtils;
 import ru.kalcho.sql2o.LocalDateTimeConverter;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
+import static spark.Spark.*;
 
 /**
  *
@@ -71,6 +72,40 @@ public class Main {
 
             response.redirect("/?day=" + request.queryParams("returnDay"));
             return null;
+        });
+
+        get("/api/tasks", (request, response) -> {
+            LocalDateTime day = request.queryParams("day") != null ?
+                    LocalDateTime.parse(request.queryParams("day")) : LocalDateTime.now();
+
+            List<Task> tasks = taskService.findByDay(day);
+            response.type("application/json; charset=UTF-8");
+            return JsonUtils.objectToJSON(tasks);
+        });
+
+        post("/api/tasks", (request, response) -> {
+            Task inputTask = JsonUtils.jsonToObject(request.body(), Task.class);
+
+            LocalDateTime scheduledTime = inputTask.getScheduledTime() != null ?
+                    inputTask.getScheduledTime() : LocalDateTime.now();
+
+            Task savedTask = taskService.addTask(inputTask.getTitle(), scheduledTime);
+            response.type("application/json; charset=UTF-8");
+            return JsonUtils.objectToJSON(savedTask);
+        });
+
+        put("/api/tasks", (request, response) -> {
+            Task inputTask = JsonUtils.jsonToObject(request.body(), Task.class);
+            Task foundTask = taskService.findById(inputTask.getId());
+            if (inputTask.getStatus() != null) {
+                foundTask.setStatus(inputTask.getStatus());
+            }
+            if (inputTask.getScheduledTime() != null) {
+                foundTask.setScheduledTime(inputTask.getScheduledTime());
+            }
+            Task savedTask = taskService.update(foundTask);
+            response.type("application/json; charset=UTF-8");
+            return JsonUtils.objectToJSON(savedTask);
         });
     }
 
