@@ -41,6 +41,8 @@ public class Main {
 
         TaskService taskService = new TaskService(new TaskDAOSql2o(sql2o));
 
+        staticFileLocation("/web");
+
         get("/", (request, response) -> {
             Map<String, Object> attributes = new HashMap<>();
 

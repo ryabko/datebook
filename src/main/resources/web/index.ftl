@@ -15,6 +15,9 @@
         .status-removed {
             color: gray;
         }
+        #tasks-container {
+            white-space: pre;
+        }
     </style>
 </head>
 <body>
@@ -59,5 +62,15 @@
         <input type="text" name="title"/>
         <input type="submit"/>
     </form>
+
+    <hr>
+    Api demo<br/>
+    <a id="prev-day" href="javascript:void(0);">&lt; Prev</a>
+    <span id="current-day"></span>
+    <a id="next-day" href="javascript:void(0);">Next &gt;</a>
+
+    <div id="tasks-container"></div>
+    <script type="text/javascript" src="/api-demo.js"></script>
+
 </body>
 </html>
