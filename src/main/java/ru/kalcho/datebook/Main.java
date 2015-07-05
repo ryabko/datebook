@@ -85,7 +85,7 @@ public class Main {
             return JsonUtils.objectToJSON(tasks);
         });
 
-        post("/api/tasks", (request, response) -> {
+        put("/api/tasks", (request, response) -> {
             Task inputTask = JsonUtils.jsonToObject(request.body(), Task.class);
 
             LocalDateTime scheduledTime = inputTask.getScheduledTime() != null ?
@@ -96,7 +96,7 @@ public class Main {
             return JsonUtils.objectToJSON(savedTask);
         });
 
-        put("/api/tasks", (request, response) -> {
+        post("/api/tasks", (request, response) -> {
             Task inputTask = JsonUtils.jsonToObject(request.body(), Task.class);
             Task foundTask = taskService.findById(inputTask.getId());
             if (inputTask.getStatus() != null) {
